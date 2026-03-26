@@ -24,7 +24,7 @@ jobs:
           echo "tag=${GITHUB_SHA}" >> $GITHUB_OUTPUT
       
       - name: Build and Push Docker Image
-        uses: ./.github/actions/docker-build-action
+        uses: vardhan556/shared-github-actions/.github/actions/github-checkout-action@main
         with:
           service_name: ${{inputs.service_name}}
           service_path: ${{inputs.service_path}}

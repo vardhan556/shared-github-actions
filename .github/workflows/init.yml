@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: ./.github/actions/github-checkout-action
+        uses: vardhan556/shared-github-actions/.github/actions/github-checkout-action@main
         with:
           repository: ${{github.repository}}
           ref: ${{inputs.branch}}
