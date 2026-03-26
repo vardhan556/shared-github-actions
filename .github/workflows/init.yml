@@ -25,5 +25,5 @@ jobs:
       - name: Set Metadata
         id: set-metadata
         run: |
-          echo "repo=${{GITHUB_REPOSITORY}}" >> $GITHUB_OUTPUT
+          echo "repo=${{github.repository}}" >> $GITHUB_OUTPUT
           echo "branch=${{inputs.branch}}"
