@@ -1,0 +1,25 @@
+name: Docker Build and Push
+
+inputs:
+  service_name:
+    required: true
+  service_path:
+    required: true
+  docker_username:
+    required: true
+  docker_password:
+    required: true
+  image_tag:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Run Docker script
+      run: python docker-build-action/main.py
+      shell: bash

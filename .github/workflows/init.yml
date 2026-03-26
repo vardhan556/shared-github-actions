@@ -1,0 +1,29 @@
+name: Initialize Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+
+    outputs:
+      repo_name: ${{steps.set-metadata.outputs.repo}}
+
+    steps:
+      - name: Checkout Source Code
+        uses: ./.github/actions/github-checkout-action
+        with:
+          repository: ${{github.repository}}
+          ref: ${{inputs.branch}}
+          token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Set Metadata
+        id: set-metadata
+        run: |
+          echo "repo=${{GITHUB_REPOSITORY}}" >> $GITHUB_OUTPUT
+          echo "branch=${{inputs.branch}}"

@@ -1,0 +1,34 @@
+name: Build Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      service_path:
+        required: true
+        type: string
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Generate image tag
+        id: tag
+        run: |
+          echo "tag=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+      
+      - name: Build and Push Docker Image
+        uses: ./.github/actions/docker-build-action
+        with:
+          service_name: ${{inputs.service_name}}
+          service_path: ${{inputs.service_path}}
+          docker_username: ${{secrets.DOCKER_USERNAME}}
+          docker_password: ${{secrets.DOCKER_TOKEN}}
+          image_tag: ${{steps.tag.outputs.tag}}
+      
