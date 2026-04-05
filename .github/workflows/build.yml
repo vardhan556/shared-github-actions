@@ -11,9 +11,9 @@ on:
         type: string
 
     secrets:
-      docker_username:
+      DOCKER_USERNAME:
         required: true
-      docker_token:
+      DOCKER_TOKEN:
         required: true
   
 jobs:
