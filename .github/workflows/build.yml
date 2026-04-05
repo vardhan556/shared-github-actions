@@ -9,6 +9,12 @@ on:
       service_path:
         required: true
         type: string
+
+    secrets:
+      docker_username:
+        required: true
+      docker_token:
+        required: true
   
 jobs:
   build:
