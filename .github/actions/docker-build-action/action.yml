@@ -23,3 +23,9 @@ runs:
     - name: Run Docker script
       run: python -u ${{github.action_path}}/main.py
       shell: bash
+      env:
+        INPUT_SERVICE_NAME: ${{ inputs.service_name }}
+        INPUT_SERVICE_PATH: ${{ inputs.service_path }}
+        INPUT_DOCKER_USERNAME: ${{ inputs.docker_username }}
+        INPUT_DOCKER_TOKEN: ${{ inputs.docker_token }}
+        INPUT_IMAGE_TAG: ${{ inputs.image_tag }}
