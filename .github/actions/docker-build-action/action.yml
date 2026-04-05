@@ -7,7 +7,7 @@ inputs:
     required: true
   docker_username:
     required: true
-  docker_password:
+  docker_token:
     required: true
   image_tag:
     required: true
