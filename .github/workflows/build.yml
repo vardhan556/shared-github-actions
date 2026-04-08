@@ -48,16 +48,16 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v2
         with:
           projectBaseDir: ${{ inputs.service_path }}
-          args: >
-            -Dsonar.projectKey=devops-microservices-lab
-            -Dsonar.host.url=http://localhost:9000
-            -Dsonar.login=admin
-            -Dsonar.password=admin
-            - name: npm audit
-              run: |
-                cd ${{inputs.service_path}}
-                npm install
-                npm audit --audit-level=high || true
+          args: "-Dsonar.projectKey=devops-microservices-lab -Dsonar.sources=."
+        env:
+          SONAR_HOST_URL: http://localhost:9000
+          SONAR_TOKEN: admin
+      
+      - name: NPM Audit
+        run: |
+          cd ${{inputs.service_path}}
+          npm install
+          npm audit --audit-level=high || true
 
       - name: Generate image tag
         id: tag
