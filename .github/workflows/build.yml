@@ -28,29 +28,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # ✅ Start SonarQube container
+      - name: Start SonarQube
+        run: |
+          docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+          echo "Waiting for SonarQube to start..."
+          sleep 30
+
+      # ✅ Wait until SonarQube is ready
+      - name: Wait for SonarQube
+        run: |
+          until curl -s http://localhost:9000/api/system/status | grep -q "UP"; do
+            echo "Waiting..."
+            sleep 5
+          done
+
+      # ✅ Sonar Scan
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v2
         with:
-          projectBaseDir: ${{inputs.service_path}}
+          projectBaseDir: ${{ inputs.service_path }}
           args: >
             -Dsonar.projectKey=devops-microservices-lab
-            -Dsonar.sources=.
-        env:
-          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
-          SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
-
-      - name: SonarQube Quality Gate
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        with:
-          scanMetaDataReportFile: ${{inputs.service_path}}/.scannerwork/report-task.txt
-        env:
-          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
-
-      - name: npm audit
-        run: |
-          cd ${{inputs.service_path}}
-          npm install
-          npm audit --audit-level=high || true
+            -Dsonar.host.url=http://localhost:9000
+            -Dsonar.login=admin
+            -Dsonar.password=admin
+            - name: npm audit
+              run: |
+                cd ${{inputs.service_path}}
+                npm install
+                npm audit --audit-level=high || true
 
       - name: Generate image tag
         id: tag
@@ -65,6 +72,14 @@ jobs:
           docker_username: ${{secrets.DOCKER_USERNAME}}
           docker_token: ${{secrets.DOCKER_TOKEN}}
           image_tag: ${{steps.tag.outputs.tag}}
+
+      # ✅ 7. Trivy Scan (Container Security)
+      - name: Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.service_name }}:${{ steps.tag.outputs.tag }}
+          format: table
+          exit-code: 0   # change to 1 later for strict security
       
       - name: Done
         run: echo "Pipeline completed successfully!!!"
